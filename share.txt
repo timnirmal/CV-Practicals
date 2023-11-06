@@ -1,0 +1,29 @@
+import pandas as pd
+
+# Sample dataframe
+# df = pd.read_csv("df_5.csv")
+
+def remove_repeated_last_lines(multi_line_string):
+    lines = multi_line_string.split('\n')
+    if len(lines) <= 1:  # If there's only one line, return it as is
+        return multi_line_string, 0
+
+    last_line = lines[-1]
+    count_repeated = 0
+
+    # Check for repeated lines from the end
+    for line in reversed(lines[:-1]):
+        if line.startswith(last_line):  # The use of startswith accounts for cases where the actual last line might be a substring of the repeated lines
+            count_repeated += 1
+        else:
+            break  # Exit the loop once a non-repeated line is found
+
+    # Remove the repeated lines
+    cleaned_lines = lines[:-count_repeated] if count_repeated else lines
+
+    return '\n'.join(cleaned_lines), count_repeated
+
+# Apply the function to the 'steps' column
+df['cleaned_steps'], df['repeated_count'] = zip(*df['steps'].apply(remove_repeated_last_lines))
+
+print(df)
